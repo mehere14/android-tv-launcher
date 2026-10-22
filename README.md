@@ -11,6 +11,8 @@ Open source. Built with Claude Code. One button to undo.
 
 [What you get](#what-you-get) · [Install](#install) · [Set up the keys](#set-up-ask-ai-the-weather-and-the-maps) · [Going back](#going-back) · [What changed](SONY.md)
 
+<img src=".github/preview.webp" width="880" alt="The home screen over NASA's picture of the day: a greeting, the search row with Ask AI, the weather, radar, clock and Plan a route boxes, and a glass shelf of apps">
+
 </div>
 
 ## What you get
