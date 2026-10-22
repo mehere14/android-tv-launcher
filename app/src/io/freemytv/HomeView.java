@@ -655,6 +655,7 @@ final class HomeView extends ViewGroup implements Choreographer.FrameCallback, H
         if (gridMoving || gridDirty) sheetLayer.invalidate();
         if (drawerMoving || bgFading) sky.invalidate();
         if (bgFading || (drawerWasMoving && !drawerMoving)) platter.invalidate();
+        if (drawerWasMoving && !drawerMoving) tiles.invalidate();   // the photo's row comes back once the drawer is gone
         drawerWasMoving = drawerMoving;
         tilesDirty = statusDirty = heroDirty = drawerDirty = gridDirty = motionDirty = false;
         if (updateClock()) {
@@ -1332,6 +1333,7 @@ final class HomeView extends ViewGroup implements Choreographer.FrameCallback, H
         drawerIndex = shelf.isEmpty() ? 0 : nearest(drawerRects, tileRects[shelfIndex].centerX());
         for (int i = 0; i < drawerFocus.length; i++) drawerFocus[i].snap(i == drawerIndex ? 1 : 0);
         drawerDirty = true;
+        tilesDirty = true;   // the photo's row hides: it would rise onto the drawer's headings
     }
 
     private void closeDrawer() {
@@ -2193,6 +2195,17 @@ final class HomeView extends ViewGroup implements Choreographer.FrameCallback, H
         android.graphics.ColorFilter v = veil(tone(0.32f, 0.42f) * Ui.clamp(drawer.value), blend(0xFFFFFFFF, 0xFF000000, dark()));
         if (lightGradient == null) lightGradient = new LinearGradient(0, 0, 0, h, 0xFFF5F5F7, 0xFFE2E2E7, Shader.TileMode.CLAMP);
         if (nightGradient == null) nightGradient = new LinearGradient(0, 0, 0, h, 0xFF1C1C1E, 0xFF0B0B0D, Shader.TileMode.CLAMP);
+        // Under an opaque photo the gradient and the wash can't be seen: skipping them saves 2 to 4 full-screen passes
+        // (a cross-fade redraws the whole screen on every frame, and older TVs' GPUs are short on fill rate).
+        boolean covered = fading ? bgTo != null && bgFrom != null && bgFrom.image != null
+                : bgTo != null && bgTo.image != null;
+        if (covered) {
+            imagePaint.setColorFilter(v);
+            if (fading) drawLightImage(c, bgFrom, 1);
+            drawLightImage(c, bgTo, fading ? e : 1);
+            imagePaint.setColorFilter(null);
+            return;
+        }
         fill.setColorFilter(v);
         if (night < 0.999f) {
             fill.setShader(lightGradient);
@@ -2694,7 +2707,7 @@ final class HomeView extends ViewGroup implements Choreographer.FrameCallback, H
      */
     private void drawApodRow(Canvas c) {
         float a = photoDark;
-        if (a <= 0.004f || apod.count() == 0) return;
+        if (a <= 0.004f || apod.count() == 0 || drawerOpen || drawer.value > 0.01f) return;
         fill.setShader(null);
         fill.setColor(Ui.alpha(0xFF0A0F19, 0.55f * a));
         c.drawRoundRect(pickerRect, pickerRect.height() / 2, pickerRect.height() / 2, fill);
