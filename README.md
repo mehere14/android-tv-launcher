@@ -36,7 +36,7 @@ About ten minutes. You need a Google TV or Android TV (Android 9 or newer) and a
 1. **On the TV**, turn on developer mode: Settings → System → About → press *Android TV OS build* 7 times. Then Settings → System → Developer options → turn on **USB debugging**. Write down the TV's IP address (Settings → Network & Internet).
 2. **On your computer**, get the code:
    ```bash
-   git clone https://github.com/simbasjungles/free-my-tv && cd free-my-tv
+   git clone https://github.com/mehere14/android-tv-launcher && cd android-tv-launcher
    ```
 3. **Open [Claude Code](https://claude.com/claude-code) in that folder** and say:
    > Install Free My TV on my TV at 192.168.1.50. I live in Lisbon.
@@ -78,7 +78,7 @@ You need an LG TV (webOS 3 or newer) and a computer on the same Wi-Fi, with Pyth
 1. **On the TV**, open the LG Content Store and install **Developer Mode**. Sign in with a free [LG developer account](https://webostv.developer.lge.com), turn on **Dev Mode Status** (the TV restarts), then turn on **Key Server**. Write down the IP address and the passphrase it shows.
 2. **On your computer**, get the code and build. `config.properties` works as for Google TV (your city, your [TMDB key](#the-tmdb-key)):
    ```bash
-   git clone https://github.com/simbasjungles/free-my-tv && cd free-my-tv
+   git clone https://github.com/mehere14/android-tv-launcher && cd android-tv-launcher
    python3 webos/build.py
    ```
 3. **Install.** The first time, it asks for the TV's passphrase; updates don't:
@@ -119,7 +119,7 @@ With your own keys (see [API keys](#rebuild-reinstall-undo-from-your-computer)) 
 
 The Google Maps Platform key needs these APIs on (and allowed in the key's restrictions): Map Tiles, Weather, Places (New), Routes, Geocoding. The Gemini key comes from [Google AI Studio](https://aistudio.google.com/apikey). Each has a free monthly allowance; set a budget alert in Google Cloud to be safe.
 
-**Step by step**, from getting the keys to sending them to the TV with `config.properties`: see [SONY.md](SONY.md#set-up-ask-ai-the-weather-and-the-maps). Everything this fork changes is listed there too.
+**Step by step**, from getting the keys to sending them to the TV with `config.properties`: see [SONY.md](SONY.md#set-up-ask-ai-the-weather-and-the-maps). Everything this project changes from the original is listed there too.
 
 ## Settings
 
@@ -250,6 +250,7 @@ No accounts, no analytics, no tracking. The app talks to TMDB and Open-Meteo (wi
 
 ## Credits
 
+- Based on [Free My TV](https://github.com/simbasjungles/free-my-tv) by its contributors (MIT). [SONY.md](SONY.md) lists what this project changes.
 - Built with [Claude Code](https://claude.com/claude-code).
 - The LG version builds on what [@danielthejoker18](https://github.com/danielthejoker18) found in [FreeMyTvWebOS](https://github.com/danielthejoker18/FreeMyTvWebOS) (MIT): installing through Developer Mode and opening apps through the TV's service bus.
 - On Samsung TVs it installs with [TizenBrew Installer](https://github.com/reisxd/TizenBrewInstaller) by [@reisxd](https://github.com/reisxd).

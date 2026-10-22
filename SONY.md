@@ -1,8 +1,8 @@
 # Free My TV on a Sony BRAVIA
 
-This fork of [simbasjungles/free-my-tv](https://github.com/simbasjungles/free-my-tv) sets Free My TV up for a Sony
+This project is based on [Free My TV](https://github.com/simbasjungles/free-my-tv) (MIT). It sets Free My TV up for a Sony
 BRAVIA running Android TV 10, with a new home screen design, Google features (Ask AI, weather, radar, routes) and
-NASA's picture of the day. This page records everything the fork changes, in the order it was built. For installing,
+NASA's picture of the day. This page records everything this project changes, in the order it was built. For installing,
 settings and undoing, see the [README](README.md).
 
 Everything here runs on the Android app (`app/`). The LG and Samsung web app (`web/`) only lost the crypto prices; it
