@@ -1,96 +1,15 @@
-# Free My TV on a Sony BRAVIA
+# What this project changes
 
 This project is based on [Free My TV](https://github.com/simbasjungles/free-my-tv) (MIT). It sets Free My TV up for a Sony
 BRAVIA running Android TV 10, with a new home screen design, Google features (Ask AI, weather, radar, routes) and
-NASA's picture of the day. This page records everything this project changes, in the order it was built. For installing,
-settings and undoing, see the [README](README.md).
+NASA's picture of the day. This page records everything this project changes from the original, in the order it
+was built. For installing, settings and undoing, see the [README](README.md).
 
 Everything here runs on the Android app (`app/`). The LG and Samsung web app (`web/`) only lost the crypto prices; it
 doesn't have the new features yet (see [Not done yet](#not-done-yet)).
 
-## Set up Ask AI, the weather and the maps
-
-Every key is optional and free to start. Without any, the home screen still works: the weather comes from Open-Meteo,
-the maps from Esri, and NASA's photo needs no key.
-
-| Key | What it turns on | Where to get it |
-|---|---|---|
-| `gemini_key` | Ask AI (answers, follow-ups, sources) | [Google AI Studio](https://aistudio.google.com/apikey) → *Create API key* |
-| `maps_key` | Google Weather, Google's map, the radar map, Plan a route | [Google Cloud console](https://console.cloud.google.com/google/maps-apis) (below) |
-| `tmdb_key` | The trending picks | [themoviedb.org](https://www.themoviedb.org/settings/api) → Settings → API |
-
-**The Google Maps Platform key, step by step**
-
-1. In the [Google Cloud console](https://console.cloud.google.com/), create a project (or pick one) and add a billing
-   account. Google asks for one even within the free monthly allowance.
-2. Turn on these APIs (*APIs & Services* → *Library*): **Map Tiles API**, **Weather API**, **Places API (New)**,
-   **Routes API** and **Geocoding API**.
-3. *APIs & Services* → *Credentials* → *Create credentials* → *API key*. Under *API restrictions*, allow only the five
-   APIs above.
-4. *Billing* → *Budgets & alerts*: set a small budget so you hear about any surprise.
-
-**1. Make `config.properties`.** In the project folder, run `./build.sh` once: it copies `config.example.properties`
-to `config.properties` (or copy it yourself). Git ignores this file, so your keys never reach GitHub.
-
-**2. Fill it in.** Paste each key after its `=`, with no quotes or spaces:
-
-```properties
-# Your place: the weather, the sunset (night look) and "near home" for routes
-latitude=43.65
-longitude=-79.38
-city=Toronto
-tmdb_region=CA
-temperature=C
-
-# Ask AI
-gemini_key=PASTE_YOUR_GEMINI_KEY
-gemini_model=gemini-flash-latest
-gemini_grounding=true
-
-# Weather, maps, radar map, routes
-maps_provider=google
-maps_key=PASTE_YOUR_MAPS_KEY
-
-# Trending picks (optional)
-tmdb_key=PASTE_YOUR_TMDB_KEY
-```
-
-Use your own city's latitude and longitude, in decimal degrees: right-click your area in Google Maps and click the
-numbers to copy them.
-
-**3. Build and install** (the place and the TMDB key are built into the app):
-
-```bash
-./build.sh
-adb connect <TV-IP>:5555
-adb install -r FreeMyTV.apk
-```
-
-**4. Send the Gemini and Maps keys to the TV.** They're not built into the app. The TV reads them from a pushed copy of
-the file, which only the TV's debugging shell can open:
-
-```bash
-adb push config.properties /data/local/tmp/freemytv.properties
-adb shell chmod 600 /data/local/tmp/freemytv.properties
-```
-
-Then press **Home** on the remote. Free My TV imports `gemini_key`, `gemini_model`, `gemini_grounding` and `maps_key`,
-stores them encrypted on the TV, deletes the pushed file, and shows *"Keys received from your computer and stored
-securely."* Nothing else in the file is read.
-
-This works once the TV is switched to Free My TV (*Free My TV* → *Home Screen* → *Free My TV*) and you've accepted its
-*Allow USB debugging?* prompt for the app: the import uses the TV's own debugging connection. No message after
-pressing Home? Check `adb logcat -s FreeMyTV` for a `keys:` line.
-
-**5. Check it.** On the TV, open *Free My TV* → *Ask AI* → **Test connection**. The key shows only its last
-4 characters. The weather card's footer says which service it used (Google or Open-Meteo).
-
-**Changing a key later:** edit `config.properties` and repeat step 4. You only need to build again for changes to the
-place or the TMDB key.
-
-**Trying it on the computer first:** `python3 mockup/server.py`, then open http://localhost:8765/. The mockup reads the
-same `config.properties`. With a `maps_key`, a `postal_code=` line there also fills in your latitude, longitude and
-city.
+To set up the keys (Gemini, Google Maps) and send them to the TV, see
+[the README](README.md#set-up-ask-ai-the-weather-and-the-maps).
 
 ## 1. Set up for the Sony BRAVIA
 
@@ -117,6 +36,8 @@ The approved mockup (`mockup/`), redrawn on the TV by `HomeView`:
 - A large **search row**: the search box with a mic inside it, and **Ask AI**.
 - Four boxes: the **weather** (now, hour by hour, sunrise, sunset, chance of rain), a **radar** thumbnail, the
   **time and date**, and **Plan a route**.
+- **No trending picks.** The original's recommendation cards are gone from the home screen; the TMDB key now only
+  feeds the optional screensaver (`own_screensaver=true`).
 - Every box has the shelf's rounded corners (62 px) and softer shadows. The sizes come from `mockup/tokens.json`.
 - Nothing is allocated while drawing: text is built once a minute or when the data changes. On the Sony, 99% of frames
   take 8 to 9 ms while the focus moves.

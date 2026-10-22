@@ -2,47 +2,58 @@
 
 <img src="docs/assets/icon-512.png" width="96" alt="">
 
-# Free My TV
+# Android TV Launcher
 
-**A fast, ad-free home screen for Google TV, LG and Samsung TVs.**
+**An ad-free home screen for Android TV, with Ask AI, live radar, routes and NASA's picture of the day.**
 
-Trending picks from your own apps, the weather at a glance, and a look that follows the sunset.<br>
+Built for a Sony BRAVIA on Android TV 10. Based on [Free My TV](https://github.com/simbasjungles/free-my-tv).<br>
 Open source. Built with Claude Code. One button to undo.
 
-[**freemytv.io**](https://freemytv.io) · [Install](#install) · [LG TVs](#lg-tvs-webos) · [Samsung TVs](#samsung-tvs-tizen) · [Any TV](#any-tv) · [Make it yours](#make-it-yours)
-
-<img src=".github/preview.webp" width="880" alt="The Free My TV home screen: a glass shelf of apps, trending picks, and a drawer with the weather">
+[What you get](#what-you-get) · [Install](#install) · [Set up the keys](#set-up-ask-ai-the-weather-and-the-maps) · [Going back](#going-back) · [What changed](SONY.md)
 
 </div>
 
 ## What you get
 
-- **No ads.** No sponsored rows, banners or autoplaying promos. Not one.
-- **Your apps, front and center.** The streaming apps you actually use, on a glass shelf. Pick them and their order right on the TV.
-- **Trending, not sponsored.** Three fresh picks every hour from what's trending this week and the latest releases, only from apps you already have. Movies and Shows get their own tabs.
-- **The weather, one press away.** The hour-by-hour forecast, sunrise and sunset.
-- **Light by day, dark by night.** It follows your city's real sunset, the way your phone does.
-- **A screensaver to match, if you want it.** Full-screen photos of the picks with a big glass clock (`own_screensaver=true`); by default the TV keeps its own, like Google's Ambient mode.
-- **Fast.** 60 fps, every frame in 16.6 ms, on the TV's own chip. The home screen uses 96 MB of memory instead of 242 MB (−60%).<br><sub>Measured on a 98″ TCL Google TV running Android 14.</sub>
-- **Set up on the TV.** Language, temperature, theme, the weather card and the apps on the shelf, in Free My TV's own settings.
-- **Safe.** No root. Nothing is uninstalled. One button brings back the factory home screen.
+- **A calm home screen.** A greeting and the clock, a big search row, and four glass boxes: the weather, a radar map,
+  the time, and *Plan a route*. Your apps sit on a glass shelf below.
+- **NASA's picture of the day as the background.** A new space photo every day, no key needed. Press ↓ under the
+  shelf to browse the last five (**‹ 1 / 5 ›**) or open one in full with NASA's description (**ⓘ**).
+- **Ask AI.** Ask anything, said or typed, and Gemini answers in large type, with its sources. Follow-ups keep the
+  conversation; *New chat* starts over.
+- **Voice that works on this TV.** Hold the remote's mic button to talk, or press a mic on screen and just speak.
+  If the remote isn't paired, the screen tells you where to pair it.
+- **Weather and radar.** The forecast hour by hour, sunrise, sunset and the chance of rain. OK on the weather or
+  radar card shows the last hour of radar, animated, on a map (Environment Canada in Canada, NOAA in the US).
+- **Plan a route.** Say or type a place, pick from the matches near home, and see the drive with live traffic.
+- **Frosted glass, even on older TVs.** Android 9 to 12 can't blur live, so the photo's blur is made once and each
+  glass box shows its piece of it.
+- **Your keys stay safe.** Send them from your computer once; the TV stores them encrypted and never logs them.
+- **No ads, nothing uninstalled.** Promo apps are turned off, never removed, and one button brings back the factory
+  home screen.
+
+Every Google feature is optional. Without any keys, the weather comes from Open-Meteo, the maps from Esri, and NASA's
+photo needs no key at all.
 
 ## Install
 
-About ten minutes. You need a Google TV or Android TV (Android 9 or newer) and a computer on the same Wi-Fi.
+About ten minutes. You need an Android TV or Google TV (Android 9 or newer) and a computer on the same Wi-Fi.
 
 ### The easy way: Claude Code
 
-1. **On the TV**, turn on developer mode: Settings → System → About → press *Android TV OS build* 7 times. Then Settings → System → Developer options → turn on **USB debugging**. Write down the TV's IP address (Settings → Network & Internet).
+1. **On the TV**, turn on developer mode: Settings → Device Preferences → About → press *Build* 7 times. Then
+   Settings → Device Preferences → Developer options → turn on **USB debugging**. Write down the TV's IP address
+   (Settings → Network & Internet).
 2. **On your computer**, get the code:
    ```bash
    git clone https://github.com/mehere14/android-tv-launcher && cd android-tv-launcher
    ```
 3. **Open [Claude Code](https://claude.com/claude-code) in that folder** and say:
-   > Install Free My TV on my TV at 192.168.1.50. I live in Lisbon.
+   > Install it on my TV at 192.168.1.50. I live in Toronto.
 
    It installs the tools it needs, builds the app and puts it on your TV. Swap in your TV's IP and your city.
-4. **On the TV**, open *Free My TV* → *Home Screen* → *Free My TV*, and accept the debugging prompt (tick *Always allow*).
+4. **On the TV**, open *Free My TV* → *Home Screen* → *Free My TV*, and accept the debugging prompt (tick *Always
+   allow*). The app is still called Free My TV on the TV.
 
 ### The manual way
 
@@ -52,102 +63,126 @@ About ten minutes. You need a Google TV or Android TV (Android 9 or newer) and a
    brew install --cask temurin android-commandlinetools android-platform-tools
    sdkmanager "build-tools;34.0.0" "platforms;android-34"
    ```
-   On Linux, get OpenJDK 17, Android's command-line tools and adb from your package manager, then run the same `sdkmanager` line. On Windows, use WSL.
+   On Linux, get OpenJDK 17, Android's command-line tools and adb from your package manager, then run the same
+   `sdkmanager` line. On Windows, use WSL.
 3. **Build:**
    ```bash
    ./build.sh
    ```
-   The first run creates `config.properties`. Set your city and your [TMDB key](#the-tmdb-key) there, then run it again.
+   The first run creates `config.properties`. Set your city there (see [the keys](#set-up-ask-ai-the-weather-and-the-maps)),
+   then run it again.
 4. **Install:**
    ```bash
    adb connect 192.168.1.50:5555
    adb install -r FreeMyTV.apk
    ```
-   On TCL TVs, also let it run in the background (TCL blocks it by default, and the switch never starts):
-   ```bash
-   adb shell "appops set io.freemytv AUTO_START allow || appops set io.freemytv APP_AUTO_START allow"
-   ```
-5. **On the TV**, open *Free My TV* → *Home Screen* → *Free My TV*.
+5. **On the TV**, open *Free My TV* → *Home Screen* → *Free My TV*, and accept the debugging prompt.
 
-## LG TVs (webOS)
+## Set up Ask AI, the weather and the maps
 
-The same home screen as an LG app: the picks, the glass shelf with your apps, the drawer with inputs and weather, day and night, Home Settings and the shelf editor. It installs through LG's own Developer Mode, with nothing rooted or changed on the TV. LG's home screen stays where it is, and Free My TV is one press of a number key away.
+Every key is optional and free to start.
 
-You need an LG TV (webOS 3 or newer) and a computer on the same Wi-Fi, with Python 3.
+| Key | What it turns on | Where to get it |
+|---|---|---|
+| `gemini_key` | Ask AI (answers, follow-ups, sources) | [Google AI Studio](https://aistudio.google.com/apikey) → *Create API key* |
+| `maps_key` | Google Weather, Google's map, the radar map, Plan a route | [Google Cloud console](https://console.cloud.google.com/google/maps-apis) (below) |
+| `tmdb_key` | Photos for the optional screensaver (`own_screensaver=true`) | [themoviedb.org](https://www.themoviedb.org/settings/api) → Settings → API |
 
-1. **On the TV**, open the LG Content Store and install **Developer Mode**. Sign in with a free [LG developer account](https://webostv.developer.lge.com), turn on **Dev Mode Status** (the TV restarts), then turn on **Key Server**. Write down the IP address and the passphrase it shows.
-2. **On your computer**, get the code and build. `config.properties` works as for Google TV (your city, your [TMDB key](#the-tmdb-key)):
-   ```bash
-   git clone https://github.com/mehere14/android-tv-launcher && cd android-tv-launcher
-   python3 webos/build.py
-   ```
-3. **Install.** The first time, it asks for the TV's passphrase; updates don't:
-   ```bash
-   python3 webos/install.py 192.168.1.50
-   ```
-4. **On the TV**, while Free My TV is open, hold a number key on the remote. From then on, that key opens it from anywhere.
+**The Google Maps Platform key, step by step**
 
-With Claude Code, say *"Install Free My TV on my LG TV at 192.168.1.50. I live in Lisbon."* It builds the app and hands you the install command, so you type the passphrase yourself.
+1. In the [Google Cloud console](https://console.cloud.google.com/), create a project (or pick one) and add a billing
+   account. Google asks for one even within the free monthly allowance.
+2. Turn on these APIs (*APIs & Services* → *Library*): **Map Tiles API**, **Weather API**, **Places API (New)**,
+   **Routes API** and **Geocoding API**.
+3. *APIs & Services* → *Credentials* → *Create credentials* → *API key*. Under *API restrictions*, allow only the five
+   APIs above.
+4. *Billing* → *Budgets & alerts*: set a small budget so you hear about any surprise.
 
-Developer Mode lasts about 40 days: open the Developer Mode app now and then and press **EXTEND**. To remove Free My TV, run `python3 webos/install.py 192.168.1.50 --uninstall`.
+**1. Make `config.properties`.** In the project folder, run `./build.sh` once: it copies `config.example.properties`
+to `config.properties` (or copy it yourself). Git ignores this file, so your keys never reach GitHub.
 
-## Samsung TVs (Tizen)
+**2. Fill it in.** Paste each key after its `=`, with no quotes or spaces:
 
-The same home screen as a Samsung app, with everything the LG one has: the picks, the shelf, the drawer with the inputs and the weather, day and night, and its own settings. It installs through Samsung's own Developer Mode, with nothing rooted or changed on the TV, and Samsung's home screen stays where it is.
+```properties
+# Your place: the weather, the sunset (night look) and "near home" for routes
+latitude=43.65
+longitude=-79.38
+city=Toronto
+tmdb_region=CA
+temperature=C
 
-You need a Samsung TV from 2017 or newer (Tizen 3+) and a computer on the same Wi-Fi.
+# Ask AI
+gemini_key=PASTE_YOUR_GEMINI_KEY
+gemini_model=gemini-flash-latest
+gemini_grounding=true
 
-1. **On the TV**, open **Apps** and type `1 2 3 4 5` on the remote. Turn **Developer mode** on, type your computer's IP address in **Host PC IP**, and restart the TV.
-2. **On your computer**, download [TizenBrew Installer](https://github.com/reisxd/TizenBrewInstaller/releases/latest), the community's installer for Samsung TVs, open it and connect to your TV.
-3. **Install from GitHub:** type `simbasjungles/free-my-tv`. On 2023 and newer TVs it asks you to sign in to your Samsung account once, to sign the app for your TV.
-4. **Straight to it:** in the TV's settings, under Start Screen Options, turn on **Autorun Last App**: the TV turns on into Free My TV.
+# Weather, maps, radar map, routes
+maps_provider=google
+maps_key=PASTE_YOUR_MAPS_KEY
+```
 
-This build takes your city from the TV's time zone. For your exact city and the trending picks, build it with your own `config.properties` and [TMDB key](#the-tmdb-key): open the folder in Claude Code and say *"Install Free My TV on my Samsung TV at 192.168.1.50. I live in Lisbon."* It sets up Samsung's tools, and on 2023 and newer TVs you sign in to your Samsung account in the browser to make the certificate.
+Use your own city's latitude and longitude, in decimal degrees: right-click your area in Google Maps and click the
+numbers to copy them.
 
-## Ask AI, radar and routes (Google, optional)
+**3. Build and install** (your place is built into the app):
 
-With your own keys (see [API keys](#rebuild-reinstall-undo-from-your-computer)) the home screen does more. Without them, it still works: the weather comes from Open-Meteo and the map from Esri.
+```bash
+./build.sh
+adb connect <TV-IP>:5555
+adb install -r FreeMyTV.apk
+```
 
-- **Search row.** The search box, its mic and **Ask AI** all open Ask AI: your question, said or typed, answered by Gemini in large type, with its sources when *Google Search grounding* is on. (On this TV, Google TV search ignores typed text handed to it, and Google's voice search doesn't start listening.)
-- **A chat.** Follow-up questions keep the conversation (**Send** or **Speak** at the bottom); **New chat** starts over.
-- **Voice.** Hold the remote's mic button to talk, or press a mic on screen and just speak. If no Bluetooth remote is paired, the screen says where to pair one.
-- **Weather.** Google Weather with a Google Maps Platform key (refreshed hourly), else Open-Meteo.
-- **Radar.** OK on the weather or radar card: the last hour of radar, animated, on Google's map (Environment Canada in Canada, NOAA in the US). Ready in about 1.5 s.
-- **Plan a route.** Say or type a place: Google Maps' matches near home, then the drive from home with live traffic, drawn on the map.
-- **NASA's picture of the day** (no key). The home screen's background, kept on the TV for offline starts. Press ↓ under the shelf for **‹ 1 / 5 ›** (the last five photos) and **ⓘ** (the photo in full with NASA's description). Ask AI shows it blurred behind the chat.
-- **Free My TV → Ask AI.** The Gemini key (masked but for its last 4 characters, stored encrypted), the model (`gemini-flash-latest`), grounding on or off, and *Test connection*.
+**4. Send the Gemini and Maps keys to the TV.** They're not built into the app. The TV reads them from a pushed copy of
+the file, which only the TV's debugging shell can open:
 
-The Google Maps Platform key needs these APIs on (and allowed in the key's restrictions): Map Tiles, Weather, Places (New), Routes, Geocoding. The Gemini key comes from [Google AI Studio](https://aistudio.google.com/apikey). Each has a free monthly allowance; set a budget alert in Google Cloud to be safe.
+```bash
+adb push config.properties /data/local/tmp/freemytv.properties
+adb shell chmod 600 /data/local/tmp/freemytv.properties
+```
 
-**Step by step**, from getting the keys to sending them to the TV with `config.properties`: see [SONY.md](SONY.md#set-up-ask-ai-the-weather-and-the-maps). Everything this project changes from the original is listed there too.
+Then press **Home** on the remote. The app imports `gemini_key`, `gemini_model`, `gemini_grounding` and `maps_key`,
+stores them encrypted on the TV (Android Keystore), deletes the pushed file, and shows *"Keys received from your
+computer and stored securely."* Nothing else in the file is read.
+
+This works once the TV is switched to Free My TV (*Free My TV* → *Home Screen* → *Free My TV*) and you've accepted its
+*Allow USB debugging?* prompt for the app: the import uses the TV's own debugging connection. No message after
+pressing Home? Check `adb logcat -s FreeMyTV` for a `keys:` line.
+
+**5. Check it.** On the TV, open *Free My TV* → *Ask AI* → **Test connection**. The key shows only its last 4
+characters. The weather card's footer says which service it used (Google or Open-Meteo).
+
+**Changing a key later:** edit `config.properties` and repeat step 4. You only need to build again for changes to the
+place or the TMDB key.
+
+**Trying it on the computer first:** `python3 mockup/server.py`, then open http://localhost:8765/. The mockup reads the
+same `config.properties`. With a `maps_key`, a `postal_code=` line there also fills in your latitude, longitude and
+city.
 
 ## Settings
 
-The first values come from `config.properties`, created by the first build (Google TV, LG and Samsung use the same file). Most of them can also be changed on the TV, in *Free My TV* → *Home Settings*, and the TV's choice wins:
+The first values come from `config.properties`. Some can also be changed on the TV, in *Free My TV* → *Home
+Settings*, and the TV's choice wins:
 
 | Key | What it does | Default |
 |---|---|---|
-| `tmdb_key` | Your free TMDB key, for the picks | empty |
-| `tmdb_region` | Your country (two letters): which titles are on which app | `US` |
-| `latitude`, `longitude` | Your city, for the weather and the sunset | New York |
+| `latitude`, `longitude` | Your city, for the weather, the sunset and routes | New York |
 | `city` | The name on the weather card | `Weather` |
 | `language` | `auto` (follows the TV), `en`, `es` or `pt` | `auto` |
 | `temperature` | `C`, `F` or `auto` | `auto` |
-| `gemini_key`, `gemini_model`, `gemini_grounding` | Ask AI (pushed to the TV, see API keys) | empty, `gemini-flash-latest`, `true` |
-| `maps_key` | Google Maps Platform: weather, maps, radar map, routes (pushed to the TV) | empty |
+| `gemini_key`, `gemini_model`, `gemini_grounding` | Ask AI (sent to the TV, see above) | empty, `gemini-flash-latest`, `true` |
+| `maps_key` | Google Maps Platform: weather, maps, radar map, routes (sent to the TV) | empty |
 | `profile_initial` | The letter on the home screen's Profile button | empty |
-| `own_screensaver` | Make Free My TV the screensaver too (otherwise the TV keeps its own, like Ambient mode) | `false` |
+| `own_screensaver` | Make it the screensaver too (otherwise the TV keeps its own, like Ambient mode) | `false` |
+| `tmdb_key`, `tmdb_region` | Photos for that screensaver | empty, `US` |
 | `disable_assistant` | Also turn off Google Assistant | `false` |
 
-Changed something? Run `./build.sh` and install again. Keep `freemytv.keystore`: updates are signed with it.
-
-### The TMDB key
-
-Free, and it takes two minutes: create an account at [themoviedb.org](https://www.themoviedb.org/signup), then open [Settings → API](https://www.themoviedb.org/settings/api) and request a developer key. Paste the *API Read Access Token* (or the *API Key*) after `tmdb_key=`. It's your key: `config.properties` stays out of git.
+Changed something? Run `./build.sh` and install again. Keep `freemytv.keystore`: updates must be signed with it.
 
 ## Going back
 
-On the TV: *Free My TV* → *Home Screen* → *Original*. The factory home screen, screensaver and every app it turned off come back exactly as they were (apps that were already off before stay off). If the new home screen ever crashes three times in five minutes, it switches back by itself.
+On the TV: *Free My TV* → *Home Screen* → *Original*. The factory home screen and every app it turned off come back
+exactly as they were (apps that were already off before stay off). If the new home screen ever crashes three times in
+five minutes, it switches back by itself.
 
 To remove it for good, switch to *Original* first, then uninstall *Free My TV* (Settings → Apps).
 
@@ -155,19 +190,15 @@ To remove it for good, switch to *Original* first, then uninstall *Free My TV* (
 
 ```bash
 ./build.sh                                   # after changing config.properties or the code
-adb connect 192.168.2.14:5555                # your TV's IP; "Always allow" on the TV the first time
+adb connect 192.168.1.50:5555                # your TV's IP; "Always allow" on the TV the first time
 adb install -r FreeMyTV.apk                  # an update keeps your settings and the switch
 ```
 
-**API keys (Gemini, Google Maps) from the computer**, without typing them on the remote: push `config.properties` to a spot only the TV's debugging shell can read, then press Home on the TV. Free My TV imports `gemini_key`, `gemini_model`, `gemini_grounding` and `maps_key`, stores them encrypted (Android Keystore) and deletes the file. Nothing else is read from it.
+Keep `freemytv.keystore`: an update signed with another key won't install (you'd have to switch to *Original* and
+uninstall first).
 
-```bash
-adb push config.properties /data/local/tmp/freemytv.properties && adb shell chmod 600 /data/local/tmp/freemytv.properties
-```
-
-Keep `freemytv.keystore`: an update signed with another key won't install (you'd have to switch to *Original* and uninstall first).
-
-**Undo without the app** (it crashed, or was uninstalled while switched): turn the apps back on, then give the home screen back. The TV's original values, recorded before the first switch, are in `sony-before.txt`.
+**Undo without the app** (it crashed, or was uninstalled while switched): turn the apps back on, then give the home
+screen back. On a Sony, the TV's original values, recorded before the first switch, are in `sony-before.txt`.
 
 ```bash
 for p in com.google.android.tvlauncher com.google.android.tvrecommendations com.google.android.play.games \
@@ -179,7 +210,7 @@ adb shell cmd package set-home-activity com.google.android.tvlauncher/.MainActiv
 
 The screensaver needs nothing: with `own_screensaver=false` the app never changes it.
 
-## What it changes
+## What it changes on the TV
 
 - It becomes the home screen (and the screensaver too, only with `own_screensaver=true`).
 - It turns off, without uninstalling:
@@ -188,77 +219,63 @@ The screensaver needs nothing: with `own_screensaver=false` the app never change
   - on Sony TVs, Sony's promotions, Sony Select, the store demo, usage reporting and the stock home screen's customizer;
   - on TCL TVs, the TCL Channel, messages, store demo, hotel menu, manuals, mirroring and logging apps;
   - Google Assistant, only with `disable_assistant=true`.
-- On TCL TVs, the remote's Netflix, YouTube and Prime buttons keep working through a small accessibility service that only reads those buttons. Pick what each one opens in *Free My TV* → *Remote Buttons*; *Original* turns the service off.
-- Picture, sound, inputs, remote pairing, Google services and the Play Store are on a protected list, checked before every change.
-- Apps that saved a Wi-Fi network are never turned off, since Android would erase the network. If the TV's first setup saved yours, the switch asks you to forget the network and connect again in Settings first (saved networks out of range don't show there; Claude Code can remove them).
+- Picture, sound, inputs, remote pairing, Google services and the Play Store are on a protected list, checked before
+  every change.
+- Apps that saved a Wi-Fi network are never turned off, since Android would erase the network. If the TV's first
+  setup saved yours, the switch asks you to forget the network and connect again in Settings first.
 
-## Any TV
+**Another brand of Android TV?** Open the folder in Claude Code and say *"set it up for my TV"*: it reads your TV,
+finds its home screen and its promo apps, and updates `DEBLOAT` and `PROTECTED` in
+[`HomeMode.java`](app/src/io/freemytv/HomeMode.java). [CLAUDE.md](CLAUDE.md) tells it how.
 
-Free My TV runs on Google TV and Android TV: TCL, Sony, Hisense, Philips, Xiaomi and more, plus streamers like Chromecast with Google TV, the Google TV Streamer, onn 4K and NVIDIA Shield. And on [LG](#lg-tvs-webos) and [Samsung](#samsung-tvs-tizen) TVs, as an app.
-
-**Any other TV:** plug a Google TV streamer into HDMI and free that one. Same steps, same home screen.
-
-**A different brand or model:** ask Claude. Free My TV is made to be adapted by AI. Open the folder in Claude Code and say *"set it up for my Sony"*: it reads your TV, finds its home screen and its promo apps, updates the lists below and walks you through a test. [CLAUDE.md](CLAUDE.md) tells it how.
-
-| What | Where |
-|---|---|
-| Apps to turn off | `DEBLOAT` in [`HomeMode.java`](app/src/io/freemytv/HomeMode.java) |
-| Apps never to touch | `PROTECTED` in the same file |
-| Apps on the shelf | `SHELF` in [`HomeApps.java`](app/src/io/freemytv/HomeApps.java) |
-| Your brand's live TV app | `LIVE_TV_APPS` in the same file |
-
-## Make it yours
-
-It's your code, and Claude Code finds its way around it. Try:
-
-- *"Add Crunchyroll to the shelf."*
-- *"Add Spanish."*
-- *"Switch to the night look an hour after sunset."*
+**LG, Samsung or another kind of TV?** This project focuses on Android TV. The original
+[Free My TV](https://github.com/simbasjungles/free-my-tv) has the LG (webOS) and Samsung (Tizen) versions, without the
+features above.
 
 ## How it works
 
-- **A plain Android app, no Gradle, no libraries.** [`build.sh`](build.sh) runs aapt2 → javac → d8 → zipalign → apksigner and makes a 2 MB APK.
-- **It uses the TV's own ADB, from inside the TV.** The app connects to `127.0.0.1:5555` with its own key (that's the *Allow USB debugging?* prompt) and runs the same commands you would: `cmd package set-home-activity`, `settings put secure screensaver_components`, `pm disable-user`. Nothing listens to the network.
-- **Drawn by hand on one Canvas**, with Android 13 shaders for the frosted glass and the sky (plain fills on Android 9 to 12, with lighter shadows and no GPU layers on 9 to 11 for their older GPUs).
-- **A safety net.** A watchdog in a separate process brings back the stock home screen after three crashes in five minutes, and a boot check keeps your choice after TV updates.
-- **On LG and Samsung, the same design in plain HTML, CSS and JavaScript** ([`web/`](web)), written for the Chromium of older TVs, with no frameworks. [`webos/build.py`](webos/build.py) packs it with `config.properties` into an `.ipk` without LG's tools, and [`webos/install.py`](webos/install.py) installs it through Developer Mode; on LG it lists and opens apps through the TV's own service bus (Luna), as LG's launcher does. [`tizen/build.py`](tizen/build.py) packs the same app into a Samsung `.wgt`, which uses Tizen's web APIs for the apps and the inputs. To preview it on a computer: `python3 webos/build.py --preview`, then open `out/webos/index.html` (a stand-in lists sample apps).
-- **Data** from TMDB (trending titles, new releases and which app streams what in your country), and Open-Meteo (forecast, sunrise and sunset).
+- **A plain Android app, no Gradle, no libraries.** [`build.sh`](build.sh) runs aapt2 → javac → d8 → zipalign →
+  apksigner and makes a 2 MB APK.
+- **It uses the TV's own ADB, from inside the TV.** The app connects to `127.0.0.1:5555` with its own key (that's the
+  *Allow USB debugging?* prompt) and runs the same commands you would. Nothing listens to the network.
+- **Drawn by hand on one Canvas**, with Android 13 shaders for the glass, and a pre-blurred photo on Android 9 to 12.
+  On the Sony, 99% of frames take 8 to 9 ms while the focus moves.
+- **A safety net.** A watchdog brings back the stock home screen after three crashes in five minutes.
 
 | File | What it is |
 |---|---|
 | [`HomeView.java`](app/src/io/freemytv/HomeView.java) | The home screen |
+| [`Apod.java`](app/src/io/freemytv/Apod.java), [`ApodActivity.java`](app/src/io/freemytv/ApodActivity.java) | NASA's picture of the day, and the full view |
+| [`AskActivity.java`](app/src/io/freemytv/AskActivity.java), [`Gemini.java`](app/src/io/freemytv/Gemini.java) | Ask AI |
+| [`Voice.java`](app/src/io/freemytv/Voice.java) | Voice, from the remote's mic |
+| [`HomeData.java`](app/src/io/freemytv/HomeData.java) | Weather (Google or Open-Meteo) |
+| [`Radar.java`](app/src/io/freemytv/Radar.java), [`RadarActivity.java`](app/src/io/freemytv/RadarActivity.java) | The radar |
+| [`PlanActivity.java`](app/src/io/freemytv/PlanActivity.java), [`Places.java`](app/src/io/freemytv/Places.java) | Plan a route |
+| [`MapTiles.java`](app/src/io/freemytv/MapTiles.java) | The maps |
+| [`Keys.java`](app/src/io/freemytv/Keys.java) | The keys, encrypted on the TV |
+| [`Scene.java`](app/src/io/freemytv/Scene.java), [`Backdrop.java`](app/src/io/freemytv/Backdrop.java) | The glass and the background |
 | [`HomeMode.java`](app/src/io/freemytv/HomeMode.java) | Switching between Free My TV and Original |
-| [`Adb.java`](app/src/io/freemytv/Adb.java) | The TV's own ADB, from inside the TV |
-| [`Recs.java`](app/src/io/freemytv/Recs.java) | The picks (TMDB) |
-| [`HomeData.java`](app/src/io/freemytv/HomeData.java) | Weather |
-| [`HomeApps.java`](app/src/io/freemytv/HomeApps.java) | The shelf, inputs and All Apps |
-| [`DreamView.java`](app/src/io/freemytv/DreamView.java) | The screensaver |
 | [`SettingsActivity.java`](app/src/io/freemytv/SettingsActivity.java) | The settings screen (the app's icon) |
-| [`Prefs.java`](app/src/io/freemytv/Prefs.java) | Settings changed on the TV |
-| [`RemoteKeys.java`](app/src/io/freemytv/RemoteKeys.java) | The TCL remote's app buttons |
-| [`Watchdog.java`](app/src/io/freemytv/Watchdog.java) | The safety net |
-| [`web/home.js`](web/home.js) | The home screen on LG TVs |
-| [`web/tv.js`](web/tv.js) | The TV's apps and inputs, on LG and Samsung |
-| [`webos/build.py`](webos/build.py), [`webos/install.py`](webos/install.py) | The LG app package and its install |
-| [`tizen/build.py`](tizen/build.py) | The Samsung app package |
+| [`mockup/`](mockup) | The design reference, in a browser with live data |
 
-The website ([freemytv.io](https://freemytv.io)) is in [`docs/`](docs): plain HTML, CSS and JS on GitHub Pages.
+[SONY.md](SONY.md) lists everything this project changes from the original, in the order it was built.
 
 ## Privacy
 
-No accounts, no analytics, no tracking. The app talks to TMDB and Open-Meteo (with the coordinates you set, or your time zone's main city). Your settings stay on your computer and your TV.
+No accounts, no analytics, no tracking. The app talks to the services you turn on: Google (Gemini, Weather, Maps,
+Places, Routes) with your own keys, and without keys Open-Meteo and Esri. NASA's photo comes from NASA, and the
+radar from Environment Canada or NOAA. Your settings and keys stay on your computer and your TV.
 
 ## Credits
 
-- Based on [Free My TV](https://github.com/simbasjungles/free-my-tv) by its contributors (MIT). [SONY.md](SONY.md) lists what this project changes.
+- Based on [Free My TV](https://github.com/simbasjungles/free-my-tv) by its contributors (MIT).
 - Built with [Claude Code](https://claude.com/claude-code).
-- The LG version builds on what [@danielthejoker18](https://github.com/danielthejoker18) found in [FreeMyTvWebOS](https://github.com/danielthejoker18/FreeMyTvWebOS) (MIT): installing through Developer Mode and opening apps through the TV's service bus.
-- On Samsung TVs it installs with [TizenBrew Installer](https://github.com/reisxd/TizenBrewInstaller) by [@reisxd](https://github.com/reisxd).
+- Background photos: NASA's [Astronomy Picture of the Day](https://apod.nasa.gov/); each photo's credit is shown with it.
+- Weather data by [Open-Meteo.com](https://open-meteo.com/) (CC BY 4.0). Radar from Environment Canada and NOAA.
 - This product uses the TMDB API but is not endorsed or certified by [TMDB](https://www.themoviedb.org/).
-- Weather data by [Open-Meteo.com](https://open-meteo.com/) (CC BY 4.0).
 - Icons: [Material Symbols](https://fonts.google.com/icons) (Apache 2.0). Font: [Inter](https://rsms.me/inter/) (SIL OFL 1.1).
-- Not affiliated with Google, TCL, LG, Samsung or any streaming service. App names and logos belong to their owners.
+- Not affiliated with Google, Sony, NASA or any streaming service. App names and logos belong to their owners.
 
 ## License
 
-[MIT](LICENSE). Fork it, change it, ship it.
+[MIT](LICENSE).
